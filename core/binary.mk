@@ -375,6 +375,8 @@ ifeq ($(my_clang),false)
     endif
 endif
 
+my_qcclang := $(strip $(LOCAL_QCCLANG))
+
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
@@ -446,6 +448,12 @@ endif
 # Include DragonTC Optimizations
 ifneq ($(DISABLE_DTC_OPTS),true)
   include $(BUILD_SYSTEM)/dragontc.mk
+else
+ifeq ($(QCCLANG),true)
+    ifeq ($(my_qcclang),)
+        my_qcclang := true
+    endif
+endif
 endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
@@ -540,6 +548,14 @@ my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBA
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+    ifeq ($(my_qcclang),true)
+        ifeq ($(strip $(my_cc)),)
+            my_cc := $(QCCLANG_PATH)/clang -mno-ae
+        endif
+        ifeq ($(strip $(my_cxx)),)
+            my_cxx := $(QCCLANG_PATH)/clang++ -mno-ae
+        endif
+    endif
 else
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
