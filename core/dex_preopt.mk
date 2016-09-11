@@ -35,9 +35,11 @@ ifeq ($(HOST_OS),linux)
   ifeq (eng,$(TARGET_BUILD_VARIANT))
     WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= false
   endif
-# Do not add mini-debug-info to the boot classpath unless explicitly asked to.
-  ifeq (true,$(WITH_DEXPREOPT_DEBUG_INFO))
-    PRODUCT_DEX_PREOPT_BOOT_FLAGS += --generate-mini-debug-info
+# Add mini-debug-info to the boot classpath on non-user builds only.
+  ifneq (user,$(TARGET_BUILD_VARIANT))
+    ifeq (true,$(WITH_DEXPREOPT_DEBUG_INFO))
+      PRODUCT_DEX_PREOPT_BOOT_FLAGS += --generate-mini-debug-info
+    endif
   endif
 endif
 
