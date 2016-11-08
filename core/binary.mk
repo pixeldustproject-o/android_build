@@ -451,7 +451,9 @@ ifneq ($(DISABLE_DTC_OPTS),true)
 else
 ifeq ($(SDCLANG),true)
     ifeq ($(my_sdclang),)
-        my_sdclang := true
+        ifeq ($(TARGET_USE_SDCLANG),true)
+            my_sdclang := true
+        endif
     endif
 endif
 endif
